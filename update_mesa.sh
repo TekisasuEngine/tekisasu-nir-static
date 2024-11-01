@@ -3,7 +3,7 @@
 # The need for the custom steps has been found empirically, by multiple build attempts.
 # The commands to run and their arguments have been obtained from the various Meson build scripts.
 # Some can (or even must) be run locally at the Mesa repo, then resulting files are copied.
-# Others, due to the sheer size of the generated files, are instead run at the Godot build system;
+# Others, due to the sheer size of the generated files, are instead run at the Tekisasu build system;
 # this script will only copy the needed scripts and data files from Mesa.
 
 check_error() {
@@ -18,7 +18,7 @@ run_custom_steps_at_source() {
 
         echo "Custom step: [$P_SUBDIR] $P_SCRIPT_PLUS_ARGS"
 
-        local OUTDIR=$GODOT_DIR/godot-mesa/$P_SUBDIR
+        local OUTDIR=$TEKISASU_DIR/tekisasu-mesa/$P_SUBDIR
         mkdir -p $OUTDIR
         check_error
         pushd ./mesa/$P_SUBDIR > /dev/null
@@ -42,9 +42,9 @@ run_custom_steps_at_source() {
 
 copy_file() {
     echo "Copying $1/$2"
-    mkdir -p godot-mesa/$1
+    mkdir -p tekisasu-mesa/$1
     check_error
-    cp ./mesa/$1/$2 godot-mesa/$1
+    cp ./mesa/$1/$2 tekisasu-mesa/$1
     check_error
 }
 
@@ -74,17 +74,17 @@ copy_custom_steps_sources() {
 copy_sources() {
     copy_subir_sources() {
         echo "Copying [.c/.cpp/.h] $1/"
-        mkdir -p godot-mesa/$1
+        mkdir -p tekisasu-mesa/$1
         check_error
-        find ./mesa/$1 -maxdepth 1 \( -name '*.c' -or -name '*.cpp' -or -name '*.h' \) -exec cp {} godot-mesa/$1 \;
+        find ./mesa/$1 -maxdepth 1 \( -name '*.c' -or -name '*.cpp' -or -name '*.h' \) -exec cp {} tekisasu-mesa/$1 \;
         check_error
     }
 
     copy_subir_headers() {
         echo "Copying [.h] $1/"
-        mkdir -p godot-mesa/$1
+        mkdir -p tekisasu-mesa/$1
         check_error
-        find ./mesa/$1 -maxdepth 1 -name '*.h' -exec cp {} godot-mesa/$1 \;
+        find ./mesa/$1 -maxdepth 1 -name '*.h' -exec cp {} tekisasu-mesa/$1 \;
         check_error
     }
 
@@ -146,23 +146,23 @@ copy_sources() {
     copy_file src/util u_vector.c
     copy_file src/util u_worklist.c
 
-    cp ./mesa/VERSION godot-mesa/VERSION.info
+    cp ./mesa/VERSION tekisasu-mesa/VERSION.info
     check_error
 }
 
 blacklist_sources() {
     # These are programs. Not needed and makes build hungrier for dependencies.
-    rm godot-mesa/src/compiler/spirv/spirv2nir.c
+    rm tekisasu-mesa/src/compiler/spirv/spirv2nir.c
     check_error
-    rm godot-mesa/src/microsoft/spirv_to_dxil/spirv2dxil.c
+    rm tekisasu-mesa/src/microsoft/spirv_to_dxil/spirv2dxil.c
     check_error
 }
 
 tweak_gitignore() {
     # bin/ is globally Git-ignored; we need the one of Mesa.
-    echo '!bin/' > godot-mesa/.gitignore
+    echo '!bin/' > tekisasu-mesa/.gitignore
     check_error
-    echo 'generated/' >> godot-mesa/.gitignore
+    echo 'generated/' >> tekisasu-mesa/.gitignore
     check_error
 }
 
@@ -174,8 +174,8 @@ custom_source_gen() {
 
         echo "Custom step: [$P_SUBDIR] $P_SCRIPT_PLUS_ARGS"
 
-        local OUTDIR=$GODOT_DIR/godot-mesa/$P_SUBDIR
-        local GENDIR=$GODOT_DIR/godot-mesa/generated/$P_SUBDIR
+        local OUTDIR=$TEKISASU_DIR/tekisasu-mesa/$P_SUBDIR
+        local GENDIR=$TEKISASU_DIR/tekisasu-mesa/generated/$P_SUBDIR
         mkdir -p $GENDIR
         check_error
         pushd $OUTDIR > /dev/null
@@ -209,11 +209,11 @@ custom_source_gen() {
 }
 
 
-GODOT_DIR=$(pwd)
+TEKISASU_DIR=$(pwd)
 
-if [ -d ./godot-mesa ]; then
-    echo "Clearing godot-mesa/"
-    find godot-mesa -mindepth 1 -type d | xargs rm -rf
+if [ -d ./tekisasu-mesa ]; then
+    echo "Clearing tekisasu-mesa/"
+    find tekisasu-mesa -mindepth 1 -type d | xargs rm -rf
 fi
 
 run_custom_steps_at_source
@@ -222,9 +222,9 @@ copy_sources
 blacklist_sources
 tweak_gitignore
 
-if [ -d ./godot-patches ]; then
+if [ -d ./tekisasu-patches ]; then
     echo "Applying patches"
-    find ./godot-patches -name '*.patch' -exec git apply {} \;
+    find ./tekisasu-patches -name '*.patch' -exec git apply {} \;
 fi
 
 custom_source_gen

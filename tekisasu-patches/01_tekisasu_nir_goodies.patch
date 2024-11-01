@@ -1,7 +1,7 @@
-diff --git a/godot-mesa/src/compiler/nir/nir_intrinsics.py b/godot-mesa/src/compiler/nir/nir_intrinsics.py
+diff --git a/tekisasu-mesa/src/compiler/nir/nir_intrinsics.py b/tekisasu-mesa/src/compiler/nir/nir_intrinsics.py
 index 7474afb..119b832 100644
---- a/godot-mesa/src/compiler/nir/nir_intrinsics.py
-+++ b/godot-mesa/src/compiler/nir/nir_intrinsics.py
+--- a/tekisasu-mesa/src/compiler/nir/nir_intrinsics.py
++++ b/tekisasu-mesa/src/compiler/nir/nir_intrinsics.py
 @@ -1046,6 +1046,9 @@ load("push_constant", [1], [BASE, RANGE, ALIGN_MUL, ALIGN_OFFSET], [CAN_ELIMINAT
  # src[] = { offset }.
  load("constant", [1], [BASE, RANGE, ALIGN_MUL, ALIGN_OFFSET],
@@ -12,15 +12,15 @@ index 7474afb..119b832 100644
  # src[] = { address }.
  load("global", [1], [ACCESS, ALIGN_MUL, ALIGN_OFFSET], [CAN_ELIMINATE])
  # src[] = { address }.
-diff --git a/godot-mesa/src/compiler/spirv/spirv_to_nir.c b/godot-mesa/src/compiler/spirv/spirv_to_nir.c
+diff --git a/tekisasu-mesa/src/compiler/spirv/spirv_to_nir.c b/tekisasu-mesa/src/compiler/spirv/spirv_to_nir.c
 index 6f87ff9..da61ec5 100644
---- a/godot-mesa/src/compiler/spirv/spirv_to_nir.c
-+++ b/godot-mesa/src/compiler/spirv/spirv_to_nir.c
+--- a/tekisasu-mesa/src/compiler/spirv/spirv_to_nir.c
++++ b/tekisasu-mesa/src/compiler/spirv/spirv_to_nir.c
 @@ -39,6 +39,8 @@
  
  #include <stdio.h>
  
-+#include "drivers/d3d12/d3d12_godot_nir_bridge.h"
++#include "drivers/d3d12/d3d12_tekisasu_nir_bridge.h"
 +
  #ifndef NDEBUG
  uint32_t mesa_spirv_debug = 0;
@@ -351,7 +351,7 @@ index 6f87ff9..da61ec5 100644
 +      val->value_type = vtn_value_type_ssa;
 +      val->ssa = vtn_create_ssa_value(b, val->type->type);
 +
-+      nir_ssa_def *sc_imm = nir_imm_int(&b->nb, GODOT_NIR_SC_SENTINEL_MAGIC | val->sc_id);
++      nir_ssa_def *sc_imm = nir_imm_int(&b->nb, TEKISASU_NIR_SC_SENTINEL_MAGIC | val->sc_id);
 +      nir_ssa_def *non_opt_const = nir_build_load_constant_non_opt(&b->nb, 1, 32, sc_imm);
 +
 +      vtn_assert(b->nb.cursor.option == nir_cursor_after_instr);
@@ -445,10 +445,10 @@ index 6f87ff9..da61ec5 100644
              progress = true;
           }
        }
-diff --git a/godot-mesa/src/compiler/spirv/vtn_cfg.c b/godot-mesa/src/compiler/spirv/vtn_cfg.c
+diff --git a/tekisasu-mesa/src/compiler/spirv/vtn_cfg.c b/tekisasu-mesa/src/compiler/spirv/vtn_cfg.c
 index b02c11b..7d0c647 100644
---- a/godot-mesa/src/compiler/spirv/vtn_cfg.c
-+++ b/godot-mesa/src/compiler/spirv/vtn_cfg.c
+--- a/tekisasu-mesa/src/compiler/spirv/vtn_cfg.c
++++ b/tekisasu-mesa/src/compiler/spirv/vtn_cfg.c
 @@ -1425,6 +1425,8 @@ vtn_emit_cf_func_unstructured(struct vtn_builder *b, struct vtn_function *func,
  
  void
@@ -468,10 +468,10 @@ index b02c11b..7d0c647 100644
     if (b->shader->info.stage == MESA_SHADER_KERNEL || force_unstructured) {
        impl->structured = false;
        vtn_emit_cf_func_unstructured(b, func, instruction_handler);
-diff --git a/godot-mesa/src/compiler/spirv/vtn_private.h b/godot-mesa/src/compiler/spirv/vtn_private.h
+diff --git a/tekisasu-mesa/src/compiler/spirv/vtn_private.h b/tekisasu-mesa/src/compiler/spirv/vtn_private.h
 index b1ec64d..1bdb3c8 100644
---- a/godot-mesa/src/compiler/spirv/vtn_private.h
-+++ b/godot-mesa/src/compiler/spirv/vtn_private.h
+--- a/tekisasu-mesa/src/compiler/spirv/vtn_private.h
++++ b/tekisasu-mesa/src/compiler/spirv/vtn_private.h
 @@ -307,6 +307,8 @@ typedef bool (*vtn_instruction_handler)(struct vtn_builder *, SpvOp,
  void vtn_build_cfg(struct vtn_builder *b, const uint32_t *words,
                     const uint32_t *end);
@@ -500,15 +500,15 @@ index b1ec64d..1bdb3c8 100644
  };
  
  #define VTN_DEC_DECORATION -1
-diff --git a/godot-mesa/src/compiler/spirv/vtn_variables.c b/godot-mesa/src/compiler/spirv/vtn_variables.c
+diff --git a/tekisasu-mesa/src/compiler/spirv/vtn_variables.c b/tekisasu-mesa/src/compiler/spirv/vtn_variables.c
 index 8db61c8..8545903 100644
---- a/godot-mesa/src/compiler/spirv/vtn_variables.c
-+++ b/godot-mesa/src/compiler/spirv/vtn_variables.c
+--- a/tekisasu-mesa/src/compiler/spirv/vtn_variables.c
++++ b/tekisasu-mesa/src/compiler/spirv/vtn_variables.c
 @@ -26,6 +26,8 @@
  #include "nir_deref.h"
  #include <vulkan/vulkan_core.h>
  
-+#include "drivers/d3d12/d3d12_godot_nir_bridge.h"
++#include "drivers/d3d12/d3d12_tekisasu_nir_bridge.h"
 +
  static struct vtn_pointer*
  vtn_align_pointer(struct vtn_builder *b, struct vtn_pointer *ptr,
@@ -526,7 +526,7 @@ index 8db61c8..8545903 100644
 +         vtn_var->orig_binding = dec->operands[0];
 +      }
 +      vtn_var->descriptor_set = 0;
-+	   vtn_var->binding = vtn_var->orig_descriptor_set * GODOT_NIR_DESCRIPTOR_SET_MULTIPLIER + vtn_var->orig_binding * GODOT_NIR_BINDING_MULTIPLIER;
++	   vtn_var->binding = vtn_var->orig_descriptor_set * TEKISASU_NIR_DESCRIPTOR_SET_MULTIPLIER + vtn_var->orig_binding * TEKISASU_NIR_BINDING_MULTIPLIER;
        vtn_var->explicit_binding = true;
        return;
 -   case SpvDecorationDescriptorSet:
@@ -535,10 +535,10 @@ index 8db61c8..8545903 100644
     case SpvDecorationInputAttachmentIndex:
        vtn_var->input_attachment_index = dec->operands[0];
        vtn_var->access |= ACCESS_NON_WRITEABLE;
-diff --git a/godot-mesa/src/microsoft/compiler/dxil_container.c b/godot-mesa/src/microsoft/compiler/dxil_container.c
+diff --git a/tekisasu-mesa/src/microsoft/compiler/dxil_container.c b/tekisasu-mesa/src/microsoft/compiler/dxil_container.c
 index 2099734..487cda7 100644
---- a/godot-mesa/src/microsoft/compiler/dxil_container.c
-+++ b/godot-mesa/src/microsoft/compiler/dxil_container.c
+--- a/tekisasu-mesa/src/microsoft/compiler/dxil_container.c
++++ b/tekisasu-mesa/src/microsoft/compiler/dxil_container.c
 @@ -338,7 +338,8 @@ dxil_container_add_state_validation(struct dxil_container *c,
  
  bool
@@ -591,10 +591,10 @@ index 2099734..487cda7 100644
        return false;
  
     return true;
-diff --git a/godot-mesa/src/microsoft/compiler/dxil_container.h b/godot-mesa/src/microsoft/compiler/dxil_container.h
+diff --git a/tekisasu-mesa/src/microsoft/compiler/dxil_container.h b/tekisasu-mesa/src/microsoft/compiler/dxil_container.h
 index b3279ee..08ab970 100644
---- a/godot-mesa/src/microsoft/compiler/dxil_container.h
-+++ b/godot-mesa/src/microsoft/compiler/dxil_container.h
+--- a/tekisasu-mesa/src/microsoft/compiler/dxil_container.h
++++ b/tekisasu-mesa/src/microsoft/compiler/dxil_container.h
 @@ -123,10 +123,11 @@ dxil_container_add_state_validation(struct dxil_container *c,
  
  bool
@@ -609,15 +609,15 @@ index b3279ee..08ab970 100644
  
  #ifdef __cplusplus
  }
-diff --git a/godot-mesa/src/microsoft/compiler/dxil_module.c b/godot-mesa/src/microsoft/compiler/dxil_module.c
+diff --git a/tekisasu-mesa/src/microsoft/compiler/dxil_module.c b/tekisasu-mesa/src/microsoft/compiler/dxil_module.c
 index 6b7f455..af322a7 100644
---- a/godot-mesa/src/microsoft/compiler/dxil_module.c
-+++ b/godot-mesa/src/microsoft/compiler/dxil_module.c
+--- a/tekisasu-mesa/src/microsoft/compiler/dxil_module.c
++++ b/tekisasu-mesa/src/microsoft/compiler/dxil_module.c
 @@ -32,6 +32,8 @@
  #include <assert.h>
  #include <stdio.h>
  
-+#include "drivers/d3d12/d3d12_godot_nir_bridge.h"
++#include "drivers/d3d12/d3d12_tekisasu_nir_bridge.h"
 +
  void
  dxil_module_init(struct dxil_module *m, void *ralloc_ctx)
@@ -626,24 +626,24 @@ index 6b7f455..af322a7 100644
           continue;
        }
  
-+      if (curr_type->type == TYPE_INTEGER && (c->int_value & GODOT_NIR_SC_SENTINEL_MAGIC_MASK) == GODOT_NIR_SC_SENTINEL_MAGIC) {
-+         uint32_t sc_id = (uint32_t)(c->int_value & ~GODOT_NIR_SC_SENTINEL_MAGIC_MASK);
++      if (curr_type->type == TYPE_INTEGER && (c->int_value & TEKISASU_NIR_SC_SENTINEL_MAGIC_MASK) == TEKISASU_NIR_SC_SENTINEL_MAGIC) {
++         uint32_t sc_id = (uint32_t)(c->int_value & ~TEKISASU_NIR_SC_SENTINEL_MAGIC_MASK);
 +         uint64_t sc_bit_offset = (uint64_t)m->buf.blob.size * 8 + m->buf.buf_bits + m->buf.abbrev_width;
-+         m->godot_nir_callbacks->report_sc_bit_offset_fn(sc_id, sc_bit_offset, m->godot_nir_callbacks->data);
++         m->tekisasu_nir_callbacks->report_sc_bit_offset_fn(sc_id, sc_bit_offset, m->tekisasu_nir_callbacks->data);
 +      }
 +
        switch (curr_type->type) {
        case TYPE_INTEGER:
           if (!emit_int_value(m, c->int_value))
-diff --git a/godot-mesa/src/microsoft/compiler/dxil_module.h b/godot-mesa/src/microsoft/compiler/dxil_module.h
+diff --git a/tekisasu-mesa/src/microsoft/compiler/dxil_module.h b/tekisasu-mesa/src/microsoft/compiler/dxil_module.h
 index ca170c5..7fab628 100644
---- a/godot-mesa/src/microsoft/compiler/dxil_module.h
-+++ b/godot-mesa/src/microsoft/compiler/dxil_module.h
+--- a/tekisasu-mesa/src/microsoft/compiler/dxil_module.h
++++ b/tekisasu-mesa/src/microsoft/compiler/dxil_module.h
 @@ -29,6 +29,8 @@
  #ifndef DXIL_MODULE_H
  #define DXIL_MODULE_H
  
-+typedef struct GodotNirCallbacks GodotNirCallbacks;
++typedef struct TekisasuNirCallbacks TekisasuNirCallbacks;
 +
  #ifdef __cplusplus
  extern "C" {
@@ -653,19 +653,19 @@ index ca170c5..7fab628 100644
  
     struct dxil_func_def *cur_emitting_func;
 +
-+   const GodotNirCallbacks *godot_nir_callbacks;
++   const TekisasuNirCallbacks *tekisasu_nir_callbacks;
  };
  
  struct dxil_instr;
-diff --git a/godot-mesa/src/microsoft/compiler/nir_to_dxil.c b/godot-mesa/src/microsoft/compiler/nir_to_dxil.c
+diff --git a/tekisasu-mesa/src/microsoft/compiler/nir_to_dxil.c b/tekisasu-mesa/src/microsoft/compiler/nir_to_dxil.c
 index c4de9dd..3c0223f 100644
---- a/godot-mesa/src/microsoft/compiler/nir_to_dxil.c
-+++ b/godot-mesa/src/microsoft/compiler/nir_to_dxil.c
+--- a/tekisasu-mesa/src/microsoft/compiler/nir_to_dxil.c
++++ b/tekisasu-mesa/src/microsoft/compiler/nir_to_dxil.c
 @@ -43,6 +43,8 @@
  
  #include <stdint.h>
  
-+#include "drivers/d3d12/d3d12_godot_nir_bridge.h"
++#include "drivers/d3d12/d3d12_tekisasu_nir_bridge.h"
 +
  int debug_dxil = 0;
  
@@ -675,7 +675,7 @@ index c4de9dd..3c0223f 100644
        resource_v1->resource_flags = 0;
     }
 +
-+   ctx->opts->godot_nir_callbacks->report_resource(layout->binding, layout->space, (uint32_t)type, ctx->opts->godot_nir_callbacks->data);
++   ctx->opts->tekisasu_nir_callbacks->report_resource(layout->binding, layout->space, (uint32_t)type, ctx->opts->tekisasu_nir_callbacks->data);
  }
  
  static const struct dxil_value *
@@ -696,7 +696,7 @@ index c4de9dd..3c0223f 100644
        MIN2(opts->shader_model_max & 0xffff, validator_version & 0xffff);
     ctx->mod.major_validator = validator_version >> 16;
     ctx->mod.minor_validator = validator_version & 0xffff;
-+   ctx->mod.godot_nir_callbacks = opts->godot_nir_callbacks;
++   ctx->mod.tekisasu_nir_callbacks = opts->tekisasu_nir_callbacks;
  
     if (s->info.stage <= MESA_SHADER_FRAGMENT) {
        uint64_t in_mask =
@@ -721,20 +721,20 @@ index c4de9dd..3c0223f 100644
     }
     dxil_container_finish(&container);
  
-+   opts->godot_nir_callbacks->report_bitcode_bit_offset_fn(bitcode_bit_offset, opts->godot_nir_callbacks->data);
++   opts->tekisasu_nir_callbacks->report_bitcode_bit_offset_fn(bitcode_bit_offset, opts->tekisasu_nir_callbacks->data);
 +
     if (debug_dxil & DXIL_DEBUG_DUMP_BLOB) {
        static int shader_id = 0;
        char buffer[64];
-diff --git a/godot-mesa/src/microsoft/compiler/nir_to_dxil.h b/godot-mesa/src/microsoft/compiler/nir_to_dxil.h
+diff --git a/tekisasu-mesa/src/microsoft/compiler/nir_to_dxil.h b/tekisasu-mesa/src/microsoft/compiler/nir_to_dxil.h
 index bdfbe23..b95ca1d 100644
---- a/godot-mesa/src/microsoft/compiler/nir_to_dxil.h
-+++ b/godot-mesa/src/microsoft/compiler/nir_to_dxil.h
+--- a/tekisasu-mesa/src/microsoft/compiler/nir_to_dxil.h
++++ b/tekisasu-mesa/src/microsoft/compiler/nir_to_dxil.h
 @@ -29,6 +29,8 @@
  #include "nir.h"
  #include "dxil_versions.h"
  
-+typedef struct GodotNirCallbacks GodotNirCallbacks;
++typedef struct TekisasuNirCallbacks TekisasuNirCallbacks;
 +
  #ifdef __cplusplus
  extern "C" {
@@ -743,19 +743,19 @@ index bdfbe23..b95ca1d 100644
     enum dxil_environment environment;
     enum dxil_shader_model shader_model_max;
     enum dxil_validator_version validator_version_max;
-+   const GodotNirCallbacks *godot_nir_callbacks;
++   const TekisasuNirCallbacks *tekisasu_nir_callbacks;
  };
  
  typedef void (*dxil_msg_callback)(void *priv, const char *msg);
-diff --git a/godot-mesa/src/microsoft/spirv_to_dxil/spirv_to_dxil.c b/godot-mesa/src/microsoft/spirv_to_dxil/spirv_to_dxil.c
+diff --git a/tekisasu-mesa/src/microsoft/spirv_to_dxil/spirv_to_dxil.c b/tekisasu-mesa/src/microsoft/spirv_to_dxil/spirv_to_dxil.c
 index 76cf6b0..819339a 100644
---- a/godot-mesa/src/microsoft/spirv_to_dxil/spirv_to_dxil.c
-+++ b/godot-mesa/src/microsoft/spirv_to_dxil/spirv_to_dxil.c
+--- a/tekisasu-mesa/src/microsoft/spirv_to_dxil/spirv_to_dxil.c
++++ b/tekisasu-mesa/src/microsoft/spirv_to_dxil/spirv_to_dxil.c
 @@ -32,6 +32,8 @@
  #include "git_sha1.h"
  #include "vulkan/vulkan.h"
  
-+#include "drivers/d3d12/d3d12_godot_nir_bridge.h"
++#include "drivers/d3d12/d3d12_tekisasu_nir_bridge.h"
 +
  static_assert(DXIL_SPIRV_SHADER_NONE == (int)MESA_SHADER_NONE, "must match");
  static_assert(DXIL_SPIRV_SHADER_VERTEX == (int)MESA_SHADER_VERTEX, "must match");
@@ -764,7 +764,7 @@ index 76cf6b0..819339a 100644
                const struct dxil_spirv_debug_options *dgb_opts,
                const struct dxil_spirv_runtime_conf *conf,
                const struct dxil_spirv_logger *logger,
-+              const GodotNirCallbacks *godot_nir_callbacks,
++              const TekisasuNirCallbacks *tekisasu_nir_callbacks,
                struct dxil_spirv_object *out_dxil)
  {
     if (stage == DXIL_SPIRV_SHADER_NONE || stage == DXIL_SPIRV_SHADER_KERNEL)
@@ -772,19 +772,19 @@ index 76cf6b0..819339a 100644
        .environment = DXIL_ENVIRONMENT_VULKAN,
        .shader_model_max = conf->shader_model_max,
        .validator_version_max = validator_version_max,
-+      .godot_nir_callbacks = godot_nir_callbacks,
++      .tekisasu_nir_callbacks = tekisasu_nir_callbacks,
     };
  
     const struct spirv_to_nir_options *spirv_opts = dxil_spirv_nir_get_spirv_options();
-diff --git a/godot-mesa/src/microsoft/spirv_to_dxil/spirv_to_dxil.h b/godot-mesa/src/microsoft/spirv_to_dxil/spirv_to_dxil.h
+diff --git a/tekisasu-mesa/src/microsoft/spirv_to_dxil/spirv_to_dxil.h b/tekisasu-mesa/src/microsoft/spirv_to_dxil/spirv_to_dxil.h
 index 40adf76..30efbd1 100644
---- a/godot-mesa/src/microsoft/spirv_to_dxil/spirv_to_dxil.h
-+++ b/godot-mesa/src/microsoft/spirv_to_dxil/spirv_to_dxil.h
+--- a/tekisasu-mesa/src/microsoft/spirv_to_dxil/spirv_to_dxil.h
++++ b/tekisasu-mesa/src/microsoft/spirv_to_dxil/spirv_to_dxil.h
 @@ -30,6 +30,8 @@
  #include <stddef.h>
  #include <stdint.h>
  
-+typedef struct GodotNirCallbacks GodotNirCallbacks;
++typedef struct TekisasuNirCallbacks TekisasuNirCallbacks;
 +
  #ifdef __cplusplus
  extern "C" {
@@ -793,7 +793,7 @@ index 40adf76..30efbd1 100644
                const struct dxil_spirv_debug_options *debug_options,
                const struct dxil_spirv_runtime_conf *conf,
                const struct dxil_spirv_logger *logger,
-+              const GodotNirCallbacks *godot_nir_callbacks,
++              const TekisasuNirCallbacks *tekisasu_nir_callbacks,
                struct dxil_spirv_object *out_dxil);
  
  /**

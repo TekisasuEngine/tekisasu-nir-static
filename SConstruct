@@ -80,7 +80,7 @@ opts.Add(
 # Add platform options
 tools = {}
 for pl in platforms:
-    tool = Tool(pl, toolpath=["godot-tools"])
+    tool = Tool(pl, toolpath=["tekisasu-tools"])
     if hasattr(tool, "options"):
         tool.options(opts)
     tools[pl] = tool
@@ -120,7 +120,7 @@ opts.Add("extra_suffix", "Custom extra suffix added to the base filename of all 
 opts.Add(BoolVariable("use_asan", "Use address sanitizer (ASAN) in MSVC", False))
 
 # Targets flags tool (optimizations, debug symbols)
-target_tool = Tool("targets", toolpath=["godot-tools"])
+target_tool = Tool("targets", toolpath=["tekisasu-tools"])
 target_tool.options(opts)
 
 opts.Update(env)
@@ -146,7 +146,7 @@ if env["arch"] == "":
             print("Unsupported CPU architecture: " + host_machine)
             Exit()
 
-tool = Tool(env["platform"], toolpath=["godot-tools"])
+tool = Tool(env["platform"], toolpath=["tekisasu-tools"])
 
 if tool is None or not tool.exists(env):
     raise ValueError("Required toolchain not found for platform " + env["platform"])
@@ -202,8 +202,8 @@ if scons_cache_path is not None:
     CacheDir(scons_cache_path)
     Decider("MD5")
 
-mesa_dir = "#godot-mesa"
-mesa_gen_dir = "#godot-mesa/generated"
+mesa_dir = "#tekisasu-mesa"
+mesa_gen_dir = "#tekisasu-mesa/generated"
 mesa_absdir = Dir(mesa_dir).abspath
 mesa_gen_absdir = Dir(mesa_dir + "/generated").abspath
 
